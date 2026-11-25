@@ -53,7 +53,7 @@ export default function App() {
     <>
       <header className="top">
         <div className="top-in">
-          <b>메모장</b>
+          <b>메모장 20261125</b>
           <span className="pill p-good">릴리스: {RELEASE_NOTE}</span>
           <span className="sp" />
           <DeployInfo />
