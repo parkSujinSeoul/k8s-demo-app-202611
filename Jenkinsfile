@@ -9,7 +9,7 @@ pipeline {
   agent any
 
   environment {
-    DOCKERHUB_USER = 'YOUR_DOCKERHUB_ID'          // TODO: 본인 Docker Hub 아이디로 변경
+    DOCKERHUB_USER = 'sjpark6468'
     IMAGE          = "docker.io/${DOCKERHUB_USER}/k8s-demo-app"
     MANIFEST_REPO  = 'github.com/parkSujinSeoul/k8s-demo-manifests-202611.git'
     MANIFEST_FILE  = 'deployment.yaml'

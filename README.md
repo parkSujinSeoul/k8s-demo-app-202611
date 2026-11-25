@@ -55,8 +55,12 @@ ArgoCD가 처음 배포할 이미지를 미리 올려 둡니다.
 
 ```bash
 docker login
-docker build --build-arg BUILD_TAG=v1 -t docker.io/<DOCKERHUB_ID>/k8s-demo-app:v1 .
-docker push docker.io/<DOCKERHUB_ID>/k8s-demo-app:v1
+# bastion(amd64)에서
+docker build --build-arg BUILD_TAG=v1 -t docker.io/sjpark6468/k8s-demo-app:v1 .
+docker push docker.io/sjpark6468/k8s-demo-app:v1
+
+# Mac(Apple Silicon)에서 올릴 때는 노드 아키텍처(amd64)로 빌드
+docker buildx build --platform linux/amd64 --build-arg BUILD_TAG=v1 -t docker.io/sjpark6468/k8s-demo-app:v1 --push .
 ```
 
 ## Jenkins 준비
@@ -68,4 +72,4 @@ docker push docker.io/<DOCKERHUB_ID>/k8s-demo-app:v1
 | Job 종류 | Pipeline, SCM: 이 저장소 `main`, Script Path: `Jenkinsfile` |
 | 권한 | `usermod -aG docker jenkins` 후 Jenkins 재시작 |
 
-`Jenkinsfile`의 `DOCKERHUB_USER`를 본인 Docker Hub 아이디로 바꿔야 합니다. Node 빌드는 Docker 안에서 하므로 bastion에 Node를 설치할 필요는 없습니다.
+`Jenkinsfile`의 `DOCKERHUB_USER`는 `sjpark6468`입니다. Node 빌드는 Docker 안에서 하므로 bastion에 Node를 설치할 필요는 없습니다.
