@@ -1,0 +1,33 @@
+# nginx 공식 이미지는 기동 시 /etc/nginx/templates/*.template 의 ${환경변수}를 치환해 conf.d에 쓴다.
+# 정의된 환경변수(APP_VERSION, BUILD_TAG)만 치환되고, nginx 변수($hostname, $uri)는 그대로 남는다.
+server {
+    listen 8080;
+    server_name _;
+    root /usr/share/nginx/html;
+
+    # readiness / liveness probe
+    location = /healthz {
+        access_log off;
+        default_type application/json;
+        return 200 '{"status":"ok"}';
+    }
+
+    # 배포 확인용: 버전(Deployment env), 빌드 태그(Jenkins), Pod 이름($hostname)
+    location = /api/info {
+        default_type application/json;
+        add_header Cache-Control "no-store";
+        return 200 '{"app":"k8s-demo-app","version":"${APP_VERSION}","build":"${BUILD_TAG}","pod":"$hostname"}';
+    }
+
+    # Vite 빌드 산출물(파일명에 해시 포함)은 오래 캐시
+    location /assets/ {
+        add_header Cache-Control "public, max-age=604800, immutable";
+        try_files $uri =404;
+    }
+
+    # index.html은 캐시하지 않아야 새 배포가 바로 보인다
+    location / {
+        add_header Cache-Control "no-cache";
+        try_files $uri $uri/ /index.html;
+    }
+}
